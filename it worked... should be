@@ -1,0 +1,14 @@
+--- ext/psych/psych_emitter.c.orig	2015-08-26 14:53:29.697669630 +0000
++++ ext/psych/psych_emitter.c	2015-08-26 14:57:08.780172213 +0000
+@@ -15,7 +15,11 @@
+static int writer(void *ctx, unsigned char *buffer, size_t size)
+{
+VALUE io = (VALUE)ctx;
++#ifdef HAVE_RUBY_ENCODING_H
++ VALUE str = rb_enc_str_new((const char *)buffer, (long)size, rb_utf8_encoding());
++#else
+VALUE str = rb_str_new((const char *)buffer, (long)size);
++#endif
+VALUE wrote = rb_funcall(io, id_write, 1, str);
+return (int)NUM2INT(wrote);
+}
